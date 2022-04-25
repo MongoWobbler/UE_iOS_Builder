@@ -11,7 +11,7 @@ Creating a Slack app to post messages through the terminal may seem like a daunt
 
 After editing the `slack_webhook_url` variable in [slack.sh](https://github.com/MongoWobbler/UE_iOS_Builder/blob/master/slack.sh) you can post slack messages in terminal with the shell script! Example below:
 
-```
+```shell
 /UE_iOS_Builder/slack.sh "Hello World!"
 ```
 
@@ -31,7 +31,7 @@ Git is slightly more involved for the initial setup, mostly because you'll need 
 
 **NOTE:** You only need **ONE** key per computer, since this works on your github profile across **all** of your repos!
 1. Open terminal and run the following
-```
+```shell
 ssh-keygen
 ```
 the `ssh-keygen` command will ask you for a filename, so enter the **full path**, something like:
@@ -42,7 +42,7 @@ After that, it'll ask you for a passphrase, you can leave the passphrase empty
 2. Open the generated public key, the one ending with `.pub`, copy that first line
 3. Add the key to **your github profile**, by going to your user settings (top right), then press on SSH and GPG keys on the left, and add **New SSH Key**.
 4. For **EVERY** repo that you'll need to use, you need to replace the remote url to use ssh, byt getting the ssh key link from github (go to clone button in github repo, and choose ssh, copy that link). Then run the following command in the directory.
-```
+```shell
 git remote set-url origin git@github.com:USERNAME/UnrealEngine.git
 ```
 5. You can check the link of the remote by typing `git remote -v` 
@@ -69,7 +69,7 @@ Make sure to edit the following variables in [build.sh](https://github.com/Mongo
 You'll need to install the [AppCenter command line interface](https://github.com/microsoft/appcenter-cli) (CLI) in order for [upload.sh](https://github.com/MongoWobbler/UE_iOS_Builder/blob/master/upload.sh) to work. To do so, first install [node.js](https://nodejs.org/en/). Node.js and npm usually get installed in `/usr/local/bin` which is fine as long as `/usr/local/bin` is in your $PATH.
 
 Next, install appcenter command line interface by typing the following into the terminal
-```
+```shell
 npm install -g appcenter-cli
 ```
 
@@ -93,35 +93,38 @@ This step differentiates the .ipa that was created by appending the date and tim
 ## All Together Now!
 In Jenkins, I have a freestyle project that with each shell script as a build step, so it ends up looking something like this:
 
-Build Step 1
-```
+##### Build Step 1
+```shell
 /UE_iOS_Builder/slack.sh "Pulling Unreal Engine Source from GitHub"
 /UE_iOS_Builder/git_pull.sh
 ```
 
-Build Step 2
-```
+##### Build Step 2
+```shell
 /UE_iOS_Builder/slack.sh "Getting latest Content from Perforce"
 /UE_iOS_Builder/p4_sync.sh
 ```
 
-Build Step 3
-```
+##### Build Step 3
+```shell
 /UE_iOS_Builder/slack.sh "Building App"
 /UE_iOS_Builder/build.sh
 ```
 
-Build Step 4
-```
+##### Build Step 4
+```shell
 /UE_iOS_Builder/slack.sh "Uploading to AppCenter"
 /UE_iOS_Builder/upload.sh
 ```
 
-Build Step 5
-```
+##### Build Step 5
+```shell
 /UE_iOS_Builder/slack.sh "Archiving app"
 /UE_iOS_Builder/archive.sh
 ```
 ## Other Useful Resources
 - [How to wake MacOS from windows](https://www.tweaking4all.com/forum/macos-x-software/waking-up-a-mac-with-wake-on-lan/#post-2867) since waking on LAN magic packet stuff does **not** appear to work on MacOS.
 - [How to trigger a Jenkins remote build](https://www.youtube.com/watch?v=ZuAdOsPfQfk). Note that user and password are separated by a colon `:`, and password and IP address are separated by the at address sign `@`.
+
+---
+Build scripts tested on M1 Mac Mini running MacOS Monterey 12.3 with XCode 13.2.1 and Unreal Engine 5.0.1
